@@ -152,20 +152,23 @@ function Restart_ct() {
 function read_protocol() {
   echo -e "请问您要设置哪种功能: "
   echo -e "-----------------------------------"
-  echo -e "[1] tcp+udp流量转发, 不加密"
+  echo -e "[1] tcp+udp本地流量转发, 不加密"
   echo -e "说明: 一般设置在国内中转机上"
   echo -e "-----------------------------------"
-  echo -e "[2] 加密隧道流量转发"
+  echo -e "[2] tcp+udp远程流量转发, 不加密"
+  echo -e "说明: 远程端口映射到本地"
+  echo -e "-----------------------------------"
+  echo -e "[3] 加密隧道流量转发"
   echo -e "说明: (1)用于转发原本加密等级较低的流量, 一般设置在国内中转机上"
   echo -e "      (2)选择此协议意味着你还有一台机器用于接收此加密流量, 之后须在那台机器上配置协议[3]进行对接"
   echo -e "-----------------------------------"
-  echo -e "[3] 解密由gost传输而来的流量并转发"
+  echo -e "[4] 解密由gost传输而来的流量并转发"
   echo -e "说明: 对于经由gost加密中转的流量, 通过此选项进行解密并转发给本机的代理服务端口或转发给其他远程机器, 一般设置在用于接收中转流量的国外机器上"
   echo -e "-----------------------------------"
-  echo -e "[4] 一键安装ss/socks5代理"
+  echo -e "[5] 一键安装ss/socks5代理"
   echo -e "说明: 使用gost内置的代理协议，轻量且易于管理"
   echo -e "-----------------------------------"
-  echo -e "[5] 进阶：多落地均衡负载"
+  echo -e "[6] 进阶：多落地均衡负载"
   echo -e "说明: 支持各种加密方式的简单均衡负载"
   echo -e "-----------------------------------"
   read -p "请选择: " numprotocol
@@ -173,12 +176,14 @@ function read_protocol() {
   if [ "$numprotocol" == "1" ]; then
     flag_a="nonencrypt"
   elif [ "$numprotocol" == "2" ]; then
-    encrypt
+    flag_a="nonencrypt2"
   elif [ "$numprotocol" == "3" ]; then
-    decrypt
+    encrypt
   elif [ "$numprotocol" == "4" ]; then
-    proxy
+    decrypt
   elif [ "$numprotocol" == "5" ]; then
+    proxy
+  elif [ "$numprotocol" == "6" ]; then
     enpeer
   else
     echo "type error, please try again"
@@ -434,6 +439,9 @@ function method() {
     if [ "$is_encrypt" == "nonencrypt" ]; then
       echo "        \"tcp://:$s_port/$d_ip:$d_port\",
         \"udp://:$s_port/$d_ip:$d_port\"" >>$gost_conf_path
+    elif [ "$is_encrypt" == "nonencrypt2" ]; then
+      echo "        \"rtcp://:$s_port/$d_ip:$d_port\",
+        \"rudp://:$s_port/$d_ip:$d_port\"" >>$gost_conf_path
     elif [ "$is_encrypt" == "peerno" ]; then
       echo "        \"tcp://:$s_port?ip=/root/$d_ip.txt&strategy=$d_port\",
         \"udp://:$s_port?ip=/root/$d_ip.txt&strategy=$d_port\"" >>$gost_conf_path
