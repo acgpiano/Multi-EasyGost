@@ -498,6 +498,9 @@ function method() {
     if [ "$is_encrypt" == "nonencrypt" ]; then
       echo "                \"tcp://:$s_port/$d_ip:$d_port\",
                 \"udp://:$s_port/$d_ip:$d_port\"" >>$gost_conf_path
+    elif [ "$is_encrypt" == "nonencrypt2" ]; then
+      echo "        \"rtcp://:$s_port/$d_ip:$d_port\",
+        \"rudp://:$s_port/$d_ip:$d_port\"" >>$gost_conf_path
     elif [ "$is_encrypt" == "peerno" ]; then
       echo "                \"tcp://:$s_port?ip=/root/$d_ip.txt&strategy=$d_port\",
                 \"udp://:$s_port?ip=/root/$d_ip.txt&strategy=$d_port\"" >>$gost_conf_path
